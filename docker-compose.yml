@@ -1,0 +1,29 @@
+version: '3.9'
+
+networks:
+    myAppNetwork:   
+
+services:
+  SqlServerDb:
+    container_name: SqlServerContainer
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    volumes:
+        - ./data:/var/opt/mssql/data
+        - ./log:/var/opt/mssql/log
+        - ./secrets:/var/opt/mssql/secrets
+    environment:
+        - ACCEPT_EULA=Y
+        - MSSQL_SA_PASSWORD=myStong_Password123#
+  devopswebapplication:
+    container_name: WebApiContainer
+    image: ${DOCKER_REGISTRY-}devopswebapplication
+    ports:
+        - 8888:80 
+    build:
+      context: .
+      dockerfile: DevOpsWebApplication/Dockerfile
+    depends_on:
+        - SqlServerDb
+        
+
+
